@@ -71,7 +71,7 @@ function hookEnabled(cfg: any, name: string): boolean {
   return cfg?.hooks?.internal?.entries?.[name]?.enabled === true;
 }
 
-const defaultBootstrap = `# BOOTSTRAP.md\n\n## Hard rehydration guard\n- You are not a blank or new assistant. Continue from the workspace state on disk.\n- Project Context can be partial or truncated. Treat it as a hint until a file is fully read or explicitly shown by this guard.\n- Before the first substantive reply, reconcile AGENTS.md, MEMORY.md, OPERATIONS.md, and today's daily memory if present.\n- Never tell Piotr that you remember nothing until you have rehydrated from those files.`;
+const defaultBootstrap = `# BOOTSTRAP.md\n\n## Hard rehydration guard\n- You are not a blank or new assistant. Continue from the workspace state on disk.\n- Project Context can be partial or truncated. Treat it as a hint until a file is fully read or explicitly shown by this guard.\n- Before the first substantive reply, reconcile AGENTS.md, MEMORY.md, OPERATIONS.md, and today's daily memory if present.\n- Never tell the owner that you remember nothing until you have rehydrated from those files.`;
 
 const requiredFiles = ['SOUL.md', 'AGENTS.md', 'IDENTITY.md', 'USER.md', 'TOOLS.md', 'MEMORY.md', 'OPERATIONS.md', 'TEAM-CONSTITUTION.md', 'SYSTEM-MAP.md'];
 
@@ -115,7 +115,7 @@ const handler = async (event: any) => {
 
   const sections: string[] = [bootBase.trim(), '', '## Runtime continuity snapshot'];
   sections.push(`- Continuity status: ${continuityBroken ? 'degraded' : 'healthy'}.`);
-  sections.push(`- **GDZIE JESTEŚ (fakt na żywo, nie z pamięci): VPS \`${os.hostname()}\`, IP YOUR_SERVER_IP. To Twój JEDYNY serwer i dom.** Hostinger NIE ISTNIEJE — skasowany 2026-07-12. Nigdy nie instaluj skilli, nie łącz się ani nie odwołuj do Hostingera. „Host" / \`--global\` / \`openclaw ... --global\` = TEN VPS, nie żaden Hostinger. Nie musisz SSH-ować na YOUR_SERVER_IP — już na nim jesteś (to byłoby łączenie się ze sobą).`);
+  sections.push(`- **WHERE YOU ARE (live fact, not memory): host \`${os.hostname()}\`. This is your only server and home.** Do not reference decommissioned infrastructure; if a memory note names a server that no longer exists, treat it as history, not current state.`);
   sections.push(`- **TERAZ jest: ${localDateTime(now)} (${LOCAL_TIME_ZONE}).** To prawdziwa data i godzina — używaj JEJ, nigdy nie zgaduj daty ani dnia tygodnia.`);
   sections.push(`- Każdy wpis do pamięci MUSI zaczynać się od daty i godziny: \`## ${today} HH:MM [TAG]\`. Czas bierz z tego snapshotu albo z komendy \`date\` — nie z pamięci.`);
   sections.push('- Czytając pamięć: pliki `memory/YYYY-MM-DD.md` są datowane nazwą, wpisy godziną — dzięki temu WIESZ kiedy co było. Nie myl przeszłości z teraźniejszością.');
@@ -128,7 +128,7 @@ const handler = async (event: any) => {
   sections.push('- Never claim "wczytałem/sprawdziłem" without a real file/log/status read or this hook snapshot as evidence.');
   sections.push('- For actionable requests, do not say you will report in the next message if you can do the work now. Execute first and include the result in the same run whenever possible.');
   sections.push('- On Telegram and other chat surfaces, keep multi-step work alive with milestone updates: started, found, installed/tested, done, or blocked. Do not wait for the user to ask what happened.');
-  sections.push('- Do not use subagents for critical bootstrap, memory, delegation, code, deploy, secrets, or audits without Piotr approval plus timeout and final status.');
+  sections.push('- Do not use subagents for critical bootstrap, memory, delegation, code, deploy, secrets, or audits without the owner approval plus timeout and final status.');
   if (continuityBroken) sections.push('- Continuity is degraded. Be explicit about what is missing instead of pretending continuity is complete.');
 
   sections.push('', '### Required file status');

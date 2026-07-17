@@ -24,9 +24,9 @@ for a in bernard dexter polly; do
 done
 
 # 1b) kontrola TREŚCI rdzenia (write-through-symlink może cicho uszkodzić źródło)
-[ -s "$WS/shared/AGENTS-CORE.md" ] && grep -q 'SPECTRA-CORE' "$WS/shared/AGENTS-CORE.md" || \
-  log "## $TS [GUARD] — ⚠️ ALERT: shared/AGENTS-CORE.md USZKODZONY (brak markera SPECTRA-CORE)! Odtwórz z gita: git show <ostatni-dobry>:bernard/AGENTS.md"
-[ -s "$WS/shared/USER-CORE.md" ] && grep -q 'USER.md — Piotr' "$WS/shared/USER-CORE.md" || \
+[ -s "$WS/shared/AGENTS-CORE.md" ] && grep -q 'TEAM-CORE' "$WS/shared/AGENTS-CORE.md" || \
+  log "## $TS [GUARD] — ⚠️ ALERT: shared/AGENTS-CORE.md USZKODZONY (brak markera TEAM-CORE)! Odtwórz z gita: git show <ostatni-dobry>:bernard/AGENTS.md"
+[ -s "$WS/shared/USER-CORE.md" ] && grep -q 'USER.md — the owner' "$WS/shared/USER-CORE.md" || \
   log "## $TS [GUARD] — ⚠️ ALERT: shared/USER-CORE.md USZKODZONY! Odtwórz z gita."
 
 # 2) dzienny skan stale (raz na dzień — marker w /run)

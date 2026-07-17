@@ -15,7 +15,7 @@ systemctl is-active --quiet openclaw-vps || add "gateway openclaw-vps NIE dział
 # 2) bind-mounty pamięci (ma być 6)
 M=$(mount | grep -c "$WS"); [ "$M" -ge 6 ] || add "bind-mounty pamięci: $M/6 (pamięć wspólna może być rozspójniona)"
 # 3) rdzeń wspólnych plików nieuszkodzony
-grep -q 'SPECTRA-CORE' shared/AGENTS-CORE.md 2>/dev/null || add "shared/AGENTS-CORE.md USZKODZONY (brak markera)"
+grep -q 'TEAM-CORE' shared/AGENTS-CORE.md 2>/dev/null || add "shared/AGENTS-CORE.md USZKODZONY (brak markera)"
 grep -q 'USER.md' shared/USER-CORE.md 2>/dev/null || add "shared/USER-CORE.md USZKODZONY"
 # 4) symlinki identycznych plików całe u całej trójki
 for a in bernard dexter polly; do
@@ -35,7 +35,7 @@ systemctl is-active --quiet openclaw-sync.timer || add "openclaw-sync.timer NIE 
 D=$(df / | awk 'NR==2{print $5}' | tr -d '%'); [ "$D" -lt 90 ] || add "dysk $D% (krytycznie mało)"
 R=$(free -m | awk 'NR==2{print $7}'); [ "$R" -gt 300 ] || add "RAM wolne ${R}MB (ryzyko OOM)"
 # 9) crony zespołu istnieją (5 bernard + polly + dexter)
-C=$(timeout 20 openclaw cron list 2>/dev/null | grep -cE 'Memory|Retrospek|Health|Walidator|Research')
+C=$(timeout 20 openclaw cron list 2>/dev/null | grep -c 'cron'  # adjust to count YOUR expected crons)
 [ "$C" -ge 5 ] || add "crony zespołu: tylko $C (część mogła zniknąć)"
 
 if [ -n "$FAIL" ]; then

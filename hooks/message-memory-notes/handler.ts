@@ -87,7 +87,7 @@ function classifyTags(text: string): string[] {
     && !/\bdone\/failed\/timeout\/rejected\b/i.test(text)
     && !/\bdone\|failed\|timeout\|rejected\b/i.test(text);
   const hasMemory = /\b(pamięć|notatki|zapamiętaj|wczytaj pamięć|daily notes|rollup|memory\.md|memory-architecture)\b/i.test(text);
-  const hasOps = /\b(ssh|vps|hostinger|deploy|gateway|openclaw|restart|chmod|permissions?)\b/i.test(text);
+  const hasOps = /\b(ssh|vps|deploy|gateway|openclaw|restart|chmod|permissions?)\b/i.test(text);
   const hasProcessChange = /\b(patch|commit|push|restart|gateway|guard|hook|contract|kontrakt|workflow|wdroż|wdr[oó]ż|załatane|zaktualizowane|zmienione|node --check)\b/i.test(text);
 
   if (hasDecision) {
@@ -174,8 +174,8 @@ function stripRuntimeNoise(text: string): string {
   return kept.join('\n');
 }
 
-// Z KIM Piotr rozmawia — etykieta agenta w każdym wpisie (bez niej nikt nie wie,
-// czyja to konwersacja; przez to Dexter „nie widział" rozmowy Polly). [CLAUDE 2026-07-13]
+// Which agent the owner talked to — etykieta agenta w każdym wpisie (bez niej nikt nie wie,
+// (label identifies which agent/owner the message belongs to)
 function agentLabel(event: any): string {
   const c = event?.context ?? {};
   const acc = String(
