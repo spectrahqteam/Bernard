@@ -1,0 +1,23 @@
+{
+  "agents": {
+    "defaults": {
+      "model": { "primary": "your-provider/your-model", "fallbacks": ["your-provider/your-fallback"] },
+      "memorySearch": { "enabled": true, "provider": "your-embeddings-provider", "sources": ["memory"] }
+    },
+    "list": [
+      { "id": "bernard", "workspace": "/root/YOURTEAM/bernard" },
+      { "id": "polly",   "workspace": "/root/YOURTEAM/polly" },
+      { "id": "dexter",  "workspace": "/root/YOURTEAM/dexter" }
+    ]
+  },
+  "channels": {
+    "telegram": {
+      "accounts": {
+        "bernard": { "token": "${TELEGRAM_BOT_TOKEN_BERNARD}" },
+        "polly":   { "token": "${TELEGRAM_BOT_TOKEN_POLLY}" },
+        "dexter":  { "token": "${TELEGRAM_BOT_TOKEN_DEXTER}" }
+      }
+    }
+  },
+  "hooks": { "internal": { "enabled": true } }
+}
