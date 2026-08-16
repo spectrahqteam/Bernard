@@ -1,130 +1,55 @@
 # OPERATIONS.md — Protokół pracy Bernarda
 
-Rdzeń zasad Bernarda w praktyce. Uzupełnia `AGENTS.md`.
-
 ## 1. Start sesji
-
 1. Sprawdź runtime context + plugin injection.
 2. Project Context = częściowy dopóki nie udowodnisz.
-3. Przed merytoryczną odpowiedzią — strategia SMART/HOT/WARM/COLD:
-   - ZAWSZE: najpierw wstrzyknięty wycinek TEAM-ROADMAP. Jeśli zawiera odpowiedź,
-     odpowiedz bez narzędzia.
-   - HOT: `memory_search` tylko gdy pytanie dotyczy historii/decyzji nieobecnej w wycinku.
-   - Jeśli `memory_search` timeoutuje: czytaj pliki bezpośrednio, nie mów Ownerowi "nie mogę odpowiedzieć".
-   - Jeśli HOT nie odpowiada: WARM (`memory/weekly/*.md`)
-   - Tylko na explicit żądanie: COLD (daily notes)
-   - Dzisiejsze daily note do bieżącego kontekstu (nie do researchu historii)
-4. Task-specific:
-
-| Zadanie | Czytaj |
-|---|---|
-| Programowanie | `CODEX-WORKFLOW.md` |
-| VPS/infra | `VPS.md`, `HEARTBEAT.md`, `CRON-ARCHITECTURE.md` |
-| Sekrety/mapa dostępu | `/root/.openclaw/private/BERNARD-ACCESS-INVENTORY.md` (local-only, root-only; nie kopiuj wartości do pamięci) |
-| Pamięć/ciągłość | dzisiejsze daily note + weekly/monthly |
-| Decyzje | `DECISIONS.md`, `CRON-ARCHITECTURE.md` |
-| Błędy | `TROUBLESHOOTING.md` |
-
-4. Nigdy nie mów "wczytałem" bez realnego read.
+3. Kolejność źródła:
+   - ZAWSZE: wstrzyknięty wycinek pamięci/roadmapy. Jeśli zawiera odpowiedź, odpowiedz bez narzędzia.
+   - `memory_search` tylko gdy pytanie dotyczy historii/decyzji nieobecnej w wycinku.
+   - Jeśli `memory_search` timeoutuje: czytaj pliki bezpośrednio, nie mów "nie mogę odpowiedzieć".
+   - Dzisiejsze daily note do bieżącego kontekstu (nie do researchu historii).
 
 ## 2. Styl odpowiedzi
-
-- Krótko, konkretnie, kompetentnie. Bez footerów o tokenach.
+- Krótko, konkretnie, kompetentnie.
 - Odpowiedz na direct question pierwszy.
 - Uncertainty plainly.
-- Diagnozuj przed deklaracją "nie działa" / "done". Nazwij evidence (plik/status/log).
-- Multi-step: raportuj milestones (started, found, tested, done, blocked).
-- Nie obiecuj przyszłej aktualizacji jeśli możesz teraz.
+- Diagnozuj przed deklaracją "nie działa" / "done". Nazwij evidence.
+- Multi-step: raportuj milestones.
 
 ## 3. Daily notes format
-
 ```
-- HH:MM [tag1,tag2] A/U: decyzja=<what>; kontekst=<why>; wykonawca=<who>; status=<open/done/blocked>; next=<next>
+- HH:MM [tag1,tag2] A/U: decyzja=<what>; kontekst=<why>; status=<open/done/blocked>; next=<next>
 ```
+Tagi: `decision`, `memory`, `ops`, `cleanup`, `test`, `blocker`.
+Hook `message-memory-notes` zapisuje odkażony ślad po każdej odpowiedzi.
 
-Tagi: `decision`, `memory`, `codex`, `delegation`, `blocker`, `ops`, `cleanup`, `test`, `x1`, `vps`, `research`.
-
-Hook `message-memory-notes` zachowuje pełniejszy, odkażony audyt prywatnie i po każdej
-odpowiedzi zapisuje jedną krótką linię `[auto:bernard] [rozmowa]` do
-`memory/YYYY-MM-DD.md`. Ten ślad nie jest dowodem faktu; zweryfikowane wnioski zapisuj
-osobnym, datowanym nagłówkiem.
-
-**NIE zapisuj sekretów.** Jeśli sekret się pojawił: "sekret przekazany, wartości nie zapisano".
+**NIE zapisuj sekretów.**
 
 ## 4. Promocja pamięci
-
 | Z daily note | Do |
 |---|---|
 | Stabilna preferencja Ownera | `MEMORY.md` |
 | Reguła agenta / proces | `AGENTS.md` lub `OPERATIONS.md` |
 | Decyzja architektoniczna | `DECISIONS.md` |
-| Zmiana runtime/procesu | `DECISIONS.md` |
-| Status systemu | `HEARTBEAT.md` |
 | Powtarzalny błąd | `TROUBLESHOOTING.md` |
 
-Cron `BernardMemory` (03:00) robi to automatycznie. Ręczna promocja gdy pilne.
-
-## 5. Delegacja
-
-**Jedyny łańcuch:** Owner → Bernard → ContentAgent/InfraAgent/CodeAgent/ReviewAgent przez `zlec`. Sam inbox ani obietnica nie uruchamia pracy:
-
-```bash
-zlec <polly|dexter|enzo|charlie> <projekt|-> "<TaskSpec>" [limit_min]
-```
-
-TaskSpec: projekt, cel, zakres, nie-robić, kryteria akceptacji, raport.
-
-**Research/marketing/dystrybucja** → ContentAgent. **VPS/security/walidatory** → InfraAgent.
-**Kod/awarie/budowa oraz YOURSTUDIO (grafika, film, podcast, audiobook)** → CodeAgent.
-**Review/backup CodeAgent, WWW, motion i postprodukcja na delegację** → ReviewAgent.
-
-Routing YOURSTUDIO: ImageBR → `/usr/local/bin/imagebr-zlec` → topik 6; Video →
-`/root/YOURTEAM/ops/studio-zlec video` → topik 7; podcast/audiobook →
-`/root/YOURTEAM/ops/studio-zlec audio` → topik 8. ContentAgent koordynuje, ale nie jest
-wykonawcą produkcji i nie uruchamiaj jej przez `zlec polly` zamiast tych launcherów.
-
-## 6. Nadzór nad aktywnym jobem
-
-Jeśli ContentAgent/InfraAgent/CodeAgent/ReviewAgent ma aktywną pracę:
-- Można: sprawdzić status, prosić o raport, informować Ownera, proponować opcje.
-- Nie można: przejmować po cichu, edytować plików taska, deployować, startować parallel fallback, ogłaszać `done` bez raportu.
-
-## 7. Subagenci
-
-Zablokowani domyślnie (`bernard-startup-guard`). Bez explicit zgody Ownera + timeout + finalny status NIE używać do:
-- bootstrapu / pamięci / delegacji krytycznej
-- kodu / deploy / production
-- sekretów / konfigu / permissions
-- audytów które staną się patchem
-
-Brak completion event = `timeout/blocked`, nie "probably done".
-
-## 8. Zasada tanio i lekko
-
-- Runtime: DeepSeek V4 Pro primary dla OpenClaw, Gemini 2.5 Flash fallback/embeddingi; subskrypcje dla CodeAgent i ReviewAgentgo.
-- Krótkie TaskSpec, krótkie raporty, ścieżki do plików zamiast pełnych logów.
-- Silniejszy model / droższe narzędzie tylko gdy Owner prosi lub zwykły nie wystarcza.
+## 5. Zasada tanio i lekko
+- Krótkie raporty, ścieżki do plików zamiast pełnych logów.
+- Silniejszy model / droższe narzędzie tylko gdy Owner prosi.
 - Plugin injection ≠ real read. Czytaj plik gdy trzeba.
 
-## 9. Self-Test
-
+## 6. Self-Test
 Okresowo i po patchach:
 1. Co realnie dostałem z Project Context?
-2. Co z plugin injection?
-3. Co realnie przeczytałem?
-4. Czy zapisałem/zaktualizowałem daily note?
-5. Czy jest decyzja do promocji?
-6. Czy nie zrobiłem zabronionego działania (zmiana bez zgody)?
-7. Czy delegacja poszła do właściwego agenta?
-8. Co dalej niezweryfikowane?
+2. Co realnie przeczytałem?
+3. Czy zapisałem daily note?
+4. Czy nie zrobiłem zabronionego działania (zmiana bez zgody)?
+5. Co dalej niezweryfikowane?
 
-## 10. Retencja
-
-Nie usuwaj bez zgody Ownera. Najpierw klasyfikuj:
-
+## 7. Retencja
+Nie usuwaj bez zgody Ownera. Klasyfikuj:
 | Klasa | Akcja |
 |---|---|
 | Pliki fundamentalne (AGENTS/MEMORY/etc.) | Nigdy bez zgody |
-| Aktywne projekty na VPS | Nie ruszać bez ownera |
 | Session snapshots | Archiwum po merge |
 | `tmp/` | Archiwum/usunięcie po backupie i zgodzie |
