@@ -1,79 +1,55 @@
-# INSTALL — Bernard + 2 OpenClaw agents from zero
+# INSTALL — one Bernard agent from zero
 
 > Tested pattern, secrets removed. Fill every `YOUR_*` placeholder with your own values.
-> Prereqs: a Linux VPS (Ubuntu 22.04+), Node.js 20+, a Telegram bot token per agent,
-> one LLM API key (this template assumes an OpenAI-compatible provider + an embeddings
-> provider for memory search).
+> Prereqs: a Linux VPS (Ubuntu 22.04+), Node.js 20+, a Telegram bot token,
+> one LLM API key (this template assumes an OpenAI-compatible provider).
 
 ## 1. Install the OpenClaw gateway
-Follow the upstream OpenClaw install for your platform, then verify:
+Follow the upstream OpenClaw install for your platform, then verify it runs.
+
+## 2. Copy the agent files
+```bash
+cd YOUR_WORKSPACE
+for f in IDENTITY SOUL AGENTS OPERATIONS TOOLS USER MEMORY BOOT HEARTBEAT; do
+  cp agents/bernard/$f.example.md $f.md
+done
 ```
-openclaw --version
+Edit each file and replace every `YOUR_*` placeholder (name, paths, timezone, voice).
+
+## 3. Install the hooks
+```bash
+mkdir -p ~/.openclaw/hooks/message-memory-notes
+cp hooks/message-memory-notes/handler.ts ~/.openclaw/hooks/message-memory-notes/handler.ts
+
+mkdir -p ~/.openclaw/hooks/session-bootstrap-guard
+cp hooks/session-bootstrap-guard/handler.ts ~/.openclaw/hooks/session-bootstrap-guard/handler.ts
+```
+Replace `/path/to/YOUR_WORKSPACE` in both hooks with your real workspace path.
+
+## 4. Install the ops scripts
+```bash
+cp ops/* /usr/local/bin/   # or another dir on your PATH
+```
+Set your workspace path in each script (`YOUR_WORKSPACE`).
+
+## 5. Install the runtime guard plugin
+```bash
+cp -r plugins/bernard-runtime-guard ~/.openclaw/plugins/bernard-runtime-guard
+cd ~/.openclaw/plugins/bernard-runtime-guard && npm install
+node --test   # verify the guard logic passes
 ```
 
-## 2. Create the team home
-```
-mkdir -p /root/YOURTEAM/{memory,shared,ops,hooks,bernard,polly,dexter,inbox}
-```
-Copy this repo's `agents/shared/AGENTS-CORE.example.md` → `/root/YOURTEAM/shared/AGENTS-CORE.md`
-and each `agents/<name>/IDENTITY.example.md` → `/root/YOURTEAM/<name>/IDENTITY.md`. Give every
-agent an identical copy of `AGENTS-CORE.md` as its `AGENTS.md` (a guard keeps them in sync).
+## 6. Configure the gateway
+Copy `openclaw.json.example` to your OpenClaw config and fill the `${ENV}` placeholders.
+Copy `.env.example` to `.env` and add your real keys (never commit it).
 
-## 3. Shared memory via bind-mounts
-So all three agents see ONE memory store, add to `/etc/fstab` (then `mount -a`):
-```
-/root/YOURTEAM/memory       /root/YOURTEAM/bernard/memory   none bind 0 0
-/root/YOURTEAM/MEMORY.md     /root/YOURTEAM/bernard/MEMORY.md none bind 0 0
-# ...repeat for polly and dexter (6 lines total)
+## 7. Verify
+```bash
+node --check hooks/message-memory-notes/handler.ts
+node --check hooks/session-bootstrap-guard/handler.ts
+node --test plugins/bernard-runtime-guard/guard-core.test.mjs
 ```
 
-## 4. Secrets — never in the repo
-```
-cp .env.example /root/.openclaw/.env      # then fill real values
-chmod 600 /root/.openclaw/.env
-```
-`.env` holds API keys + one Telegram bot token per agent. The config only references
-`${ENV_NAME}` — values live in `.env` alone.
-
-## 5. Gateway config
-Copy `openclaw.json.example` → `~/.openclaw/openclaw.json`, set each agent's `workspace`,
-`model` (primary + fallback), and Telegram routing. Validate:
-```
-openclaw config validate
-```
-
-## 6. Hooks (automatic learning)
-Copy `hooks/` → `~/.openclaw/hooks/` (the gateway loads them from there). They enable the
-shared memory notes + the bootstrap guard.
-
-## 7. Guardrails + backup
-Copy `ops/*.sh` somewhere runnable, set up a 30s timer for `sync-now.sh`/`integrity-guard.sh`
-and a 3h timer for `team-doctor.sh` (systemd timers or cron). Point `sync-now.sh` at your
-own private Git backup.
-
-## 7b. Runtime guard plugin
-Copy `plugins/bernard-runtime-guard/` to your gateway's plugin directory, then enable it in
-your gateway config. Verify with its own unit tests:
-```
-cd plugins/bernard-runtime-guard && node --test
-```
-The plugin needs the team scripts it references (`ops/team-roadmap.py`, etc.) — point its
-paths at your own `ops/` directory (fill the `YOUR_*` placeholders in its source).
-
-## 7c. Delegation + memory scripts
-Copy `ops/*.py` and `ops/zlec` next to the shell guardrails. `zlec` launches a background
-worker and reports back to you automatically; `spectra-hub.py --live` is your one-command
-whole-team health check; `memory-write.py` is the append-only gate the nightly memory cron
-uses so a model can never truncate `MEMORY.md`.
-
-## 8. Run
-```
-systemctl start openclaw-vps        # or: openclaw gateway run
-```
-Message your Bernard bot. On first reply the bootstrap guard proves memory is loaded.
-
-## Optional: headless coding agents
-Our team drives two CLI coding agents (one per subscription) via small launcher scripts that
-run in the background and auto-report to the owner on completion (result → topic, ✅/⚠️ → DM,
-timeout → kill). That layer is team-specific and not shipped here, but the pattern is: wrap
-the CLI in `timeout`, then a deterministic notifier posts the outcome. Build your own to taste.
+## What you get
+A single agent that remembers everything, learns over time, and is kept honest by
+deterministic guardrails — with zero secrets in the repo.
