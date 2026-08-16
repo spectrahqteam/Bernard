@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "instagram",
+  "installedVersion": "2.1.1",
+  "installedAt": 1783954003304,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "19b2254b69acefbaf1b8a42de01a51d9b0aaf590f43304ed345c90fec2abdf59",
+    "integrity": "sha256-GbIlS2ms77rxuKQt4BpR2bCq9ZD0MwTtNFyQ/sKr31k="
+  },
+  "skillFile": {
+    "path": "skill.md",
+    "sha256": "71d8912474387f02dc38de73070b87653d2b59e2ae00441c9bb6bd5dd3d6f399"
+  }
+}

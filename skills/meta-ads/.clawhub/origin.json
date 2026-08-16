@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "meta-ads",
+  "installedVersion": "1.0.0",
+  "installedAt": 1783954003733,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "f1f971925662d2204629397e97b037168c28cb22cd5ff26ebe32c36d82400bcf",
+    "integrity": "sha256-8flxklZi0iBGKTl+l7A3FowoyyLNX/JuvjLDbYJAC88="
+  },
+  "skillFile": {
+    "path": "skill.md",
+    "sha256": "cde5fbb94b3f45a1eee08dd2d526612224afb3f0274739ca62e41e5d5ad9c80e"
+  }
+}

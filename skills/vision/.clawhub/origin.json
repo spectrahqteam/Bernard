@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "vision",
+  "ownerHandle": "kotot",
+  "installedVersion": "1.0.1",
+  "installedAt": 1786444987453,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "831c46a1ba4b05d4db62678d813fedb848e1572a537672bd909bff3d782ffb76",
+    "integrity": "sha256-gxxGobpLBdTbYmeNgT/tuEjhVypTdnK9kJv/PXgv+3Y="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "9e4159da3c69a2dff641a34c8300cd7878d52addb134d62e7dfb5e5d16190005"
+  }
+}
