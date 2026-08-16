@@ -1,0 +1,13 @@
+{
+  "id": "bernard-runtime-guard",
+  "name": "Bernard Runtime Guard",
+  "description": "Prevents Bernard from contradicting text tool results or claiming that a still-running process has completed.",
+  "activation": {
+    "onStartup": true
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
