@@ -10,7 +10,7 @@ Rdzeń zasad Bernarda w praktyce. Uzupełnia `AGENTS.md`.
    - ZAWSZE: najpierw wstrzyknięty wycinek TEAM-ROADMAP. Jeśli zawiera odpowiedź,
      odpowiedz bez narzędzia.
    - HOT: `memory_search` tylko gdy pytanie dotyczy historii/decyzji nieobecnej w wycinku.
-   - Jeśli `memory_search` timeoutuje: czytaj pliki bezpośrednio, nie mów Piotrowi "nie mogę odpowiedzieć".
+   - Jeśli `memory_search` timeoutuje: czytaj pliki bezpośrednio, nie mów Ownerowi "nie mogę odpowiedzieć".
    - Jeśli HOT nie odpowiada: WARM (`memory/weekly/*.md`)
    - Tylko na explicit żądanie: COLD (daily notes)
    - Dzisiejsze daily note do bieżącego kontekstu (nie do researchu historii)
@@ -55,7 +55,7 @@ osobnym, datowanym nagłówkiem.
 
 | Z daily note | Do |
 |---|---|
-| Stabilna preferencja Piotra | `MEMORY.md` |
+| Stabilna preferencja Ownera | `MEMORY.md` |
 | Reguła agenta / proces | `AGENTS.md` lub `OPERATIONS.md` |
 | Decyzja architektoniczna | `DECISIONS.md` |
 | Zmiana runtime/procesu | `DECISIONS.md` |
@@ -66,7 +66,7 @@ Cron `BernardMemory` (03:00) robi to automatycznie. Ręczna promocja gdy pilne.
 
 ## 5. Delegacja
 
-**Jedyny łańcuch:** Piotr → Bernard → Polly/Dexter/Enzo/Charlie przez `zlec`. Sam inbox ani obietnica nie uruchamia pracy:
+**Jedyny łańcuch:** Owner → Bernard → ContentAgent/InfraAgent/CodeAgent/ReviewAgent przez `zlec`. Sam inbox ani obietnica nie uruchamia pracy:
 
 ```bash
 zlec <polly|dexter|enzo|charlie> <projekt|-> "<TaskSpec>" [limit_min]
@@ -74,24 +74,24 @@ zlec <polly|dexter|enzo|charlie> <projekt|-> "<TaskSpec>" [limit_min]
 
 TaskSpec: projekt, cel, zakres, nie-robić, kryteria akceptacji, raport.
 
-**Research/marketing/dystrybucja** → Polly. **VPS/security/walidatory** → Dexter.
-**Kod/awarie/budowa oraz SpectraStudio (grafika, film, podcast, audiobook)** → Enzo.
-**Review/backup Enzo, WWW, motion i postprodukcja na delegację** → Charlie.
+**Research/marketing/dystrybucja** → ContentAgent. **VPS/security/walidatory** → InfraAgent.
+**Kod/awarie/budowa oraz YOURSTUDIO (grafika, film, podcast, audiobook)** → CodeAgent.
+**Review/backup CodeAgent, WWW, motion i postprodukcja na delegację** → ReviewAgent.
 
-Routing SpectraStudio: ImageBR → `/usr/local/bin/imagebr-zlec` → topik 6; Video →
-`/root/SpectraHQteam/ops/studio-zlec video` → topik 7; podcast/audiobook →
-`/root/SpectraHQteam/ops/studio-zlec audio` → topik 8. Polly koordynuje, ale nie jest
+Routing YOURSTUDIO: ImageBR → `/usr/local/bin/imagebr-zlec` → topik 6; Video →
+`/root/YOURTEAM/ops/studio-zlec video` → topik 7; podcast/audiobook →
+`/root/YOURTEAM/ops/studio-zlec audio` → topik 8. ContentAgent koordynuje, ale nie jest
 wykonawcą produkcji i nie uruchamiaj jej przez `zlec polly` zamiast tych launcherów.
 
 ## 6. Nadzór nad aktywnym jobem
 
-Jeśli Polly/Dexter/Enzo/Charlie ma aktywną pracę:
-- Można: sprawdzić status, prosić o raport, informować Piotra, proponować opcje.
+Jeśli ContentAgent/InfraAgent/CodeAgent/ReviewAgent ma aktywną pracę:
+- Można: sprawdzić status, prosić o raport, informować Ownera, proponować opcje.
 - Nie można: przejmować po cichu, edytować plików taska, deployować, startować parallel fallback, ogłaszać `done` bez raportu.
 
 ## 7. Subagenci
 
-Zablokowani domyślnie (`bernard-startup-guard`). Bez explicit zgody Piotra + timeout + finalny status NIE używać do:
+Zablokowani domyślnie (`bernard-startup-guard`). Bez explicit zgody Ownera + timeout + finalny status NIE używać do:
 - bootstrapu / pamięci / delegacji krytycznej
 - kodu / deploy / production
 - sekretów / konfigu / permissions
@@ -101,9 +101,9 @@ Brak completion event = `timeout/blocked`, nie "probably done".
 
 ## 8. Zasada tanio i lekko
 
-- Runtime: DeepSeek V4 Pro primary dla OpenClaw, Gemini 2.5 Flash fallback/embeddingi; subskrypcje dla Enzo i Charliego.
+- Runtime: DeepSeek V4 Pro primary dla OpenClaw, Gemini 2.5 Flash fallback/embeddingi; subskrypcje dla CodeAgent i ReviewAgentgo.
 - Krótkie TaskSpec, krótkie raporty, ścieżki do plików zamiast pełnych logów.
-- Silniejszy model / droższe narzędzie tylko gdy Piotr prosi lub zwykły nie wystarcza.
+- Silniejszy model / droższe narzędzie tylko gdy Owner prosi lub zwykły nie wystarcza.
 - Plugin injection ≠ real read. Czytaj plik gdy trzeba.
 
 ## 9. Self-Test
@@ -120,7 +120,7 @@ Okresowo i po patchach:
 
 ## 10. Retencja
 
-Nie usuwaj bez zgody Piotra. Najpierw klasyfikuj:
+Nie usuwaj bez zgody Ownera. Najpierw klasyfikuj:
 
 | Klasa | Akcja |
 |---|---|
