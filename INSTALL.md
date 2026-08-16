@@ -51,6 +51,21 @@ Copy `ops/*.sh` somewhere runnable, set up a 30s timer for `sync-now.sh`/`integr
 and a 3h timer for `team-doctor.sh` (systemd timers or cron). Point `sync-now.sh` at your
 own private Git backup.
 
+## 7b. Runtime guard plugin
+Copy `plugins/bernard-runtime-guard/` to your gateway's plugin directory, then enable it in
+your gateway config. Verify with its own unit tests:
+```
+cd plugins/bernard-runtime-guard && node --test
+```
+The plugin needs the team scripts it references (`ops/team-roadmap.py`, etc.) — point its
+paths at your own `ops/` directory (fill the `YOUR_*` placeholders in its source).
+
+## 7c. Delegation + memory scripts
+Copy `ops/*.py` and `ops/zlec` next to the shell guardrails. `zlec` launches a background
+worker and reports back to you automatically; `spectra-hub.py --live` is your one-command
+whole-team health check; `memory-write.py` is the append-only gate the nightly memory cron
+uses so a model can never truncate `MEMORY.md`.
+
 ## 8. Run
 ```
 systemctl start openclaw-vps        # or: openclaw gateway run

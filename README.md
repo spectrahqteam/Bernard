@@ -5,7 +5,7 @@ single VPS. This repo is a **clean, secrets-free blueprint** of how Bernard is b
 skills, how he talks to the other agents, his hooks, and how his "backward memory" makes
 the whole team a little smarter after every conversation.
 
-Built by [SpectraHQteam](https://github.com/your-team). No passwords, no keys, no access —
+Built as the cleaned template of a real production team (team name removed). No passwords, no keys, no access —
 just the architecture and the code, so you can build your own.
 
 > ⚠️ This is a **template**. Every file ending in `.example` and every `YOUR_*` placeholder
@@ -57,11 +57,28 @@ Scheduled jobs read the last days of memory, extract lessons, and promote the es
 long-term store stays small and true.
 
 ### 4. Deterministic guardrails (`ops/`) — outside the model
-Shell scripts, not prompts, keep the system honest:
+Shell/Python scripts, not prompts, keep the system honest:
 - **integrity-guard** — self-heals the shared core files, scans for stale facts.
 - **team-doctor** — health check (gateway, mounts, hooks, sync, disk/RAM, crons); loud
   alert on silent failures.
 - **sync-now** — continuous Git backup (only when something changed).
+- **zlec** — one deterministic delegation queue: `zlec <agent> <project> "<task>" [minutes]`
+  launches a background worker, tracks state, and auto-reports the result back to the owner.
+- **spectra-hub** — a single secrets-free controller that checks every layer at once
+  (repos, memory, cron state, secrets vault presence) with `--live`.
+- **team-day-brief** — "what did the team do today", without any model call.
+- **memory-write** — append-only write to long-term memory (a model can never truncate the
+  file); enforces a daily write limit.
+- **research-note** — deterministic daily-note append (date/time/signature handled by the
+  script, not the model).
+- **team-memory-maintenance** — local FTS reindex + hygiene limits, zero AI tokens.
+
+### 5. Runtime guard plugin (`plugins/bernard-runtime-guard`)
+A native OpenClaw plugin that enforces invariants the model cannot be trusted to keep on its
+own: it blocks claiming a `type: "text"` tool result is an image, blocks reporting a still-
+`running` process as done, blocks gateway restart/stop/start through `exec`, and rewrites
+empty tool results into an explicit "no data" notice. Ships with unit tests
+(`node --test`).
 
 ---
 
@@ -85,7 +102,8 @@ INSTALL.md                    ← build Bernard + 2 agents from zero
 .env.example                  ← every env var NAME (no values)
 openclaw.json.example         ← sanitized gateway config (${ENV} placeholders)
 hooks/                        ← the two learning hooks (TypeScript)
-ops/                          ← guard / doctor / sync scripts
+plugins/                      ← runtime guard plugin + unit tests
+ops/                          ← guard / doctor / sync / delegation / memory scripts
 agents/
   shared/AGENTS-CORE.example.md
   bernard|polly|dexter/IDENTITY.example.md
